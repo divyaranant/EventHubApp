@@ -1,0 +1,11 @@
+{
+  "title": "QA Automation Summit",
+  "description": "A conference for QA engineers to learn automation best practices.",
+  "category": "Conference",
+  "city": "Bangalore",
+  "venue": "Tech Park Convention Center",
+  "date": "2027-01-15T10:00",
+  "price": "100",
+  "seats": "50",
+  "imageUrl": "https://picsum.photos/seed/eventhubqa/640/360"
+}
