@@ -34,6 +34,31 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report-${{ matrix.environment }}-${{ matrix.shard }}
-        path: playwright-report/
-        retention-days: 30
+        name: blob-report-${{ matrix.environment }}-${{ matrix.shard }}
+        path: blob-report/
+        retention-days: 1
+
+  merge-reports:
+    needs: [test]
+    if: ${{ !cancelled() }}
+    strategy:
+      matrix:
+        environment: [qa, preprod]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-${{ matrix.environment }}-*
+          path: all-blob-reports
+          merge-multiple: true
+      - run: npx playwright merge-reports --reporter html ./all-blob-reports
+      - uses: actions/upload-artifact@v4
+        with:
+          name: html-report-${{ matrix.environment }}
+          path: playwright-report/
+          retention-days: 30
