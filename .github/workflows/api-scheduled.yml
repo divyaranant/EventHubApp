@@ -31,7 +31,7 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-        run: npx playwright test --grep "@api"
+        run: npx playwright test --grep "@api" --reporter=html
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
