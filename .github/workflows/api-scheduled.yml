@@ -1,0 +1,40 @@
+name: API Tests (Scheduled)
+
+on:
+  schedule:
+    # Runs every day at 03:00 UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [qa, preprod]
+    environment: ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm ci
+      - name: Run API tests
+        env:
+          ENV: ${{ matrix.environment }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        run: npx playwright test --grep "@api"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: api-html-report-${{ matrix.environment }}
+          path: playwright-report/
+          retention-days: 30

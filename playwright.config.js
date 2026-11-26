@@ -55,6 +55,13 @@ export default defineConfig({
              storageState: 'playwright/.auth/user.json'
       },
       dependencies: ['setup'],
+      testIgnore: /tests[\\/]api[\\/].*/,
+    },
+
+    {
+      name: 'api',
+      testMatch: /tests[\\/]api[\\/].*\.spec\.js/,
+      dependencies: ['setup'],
     },
 
     // {
